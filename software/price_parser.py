@@ -1,28 +1,81 @@
 '''
-This is the python code for parsing our market data.
+This is the python code for parsing our market data. It simulates arbitrage opportunities by creating lag between
+two Exchanges (A and B) during volatile price changes in Exchange A.
 
 It first reads from the .csv containing market data, and extracts prices from each line.
 We multiply by 100 to turn our dollars and cents combo into a single integer.
 Prices may include more than 2 digits after the decimal point, so we force the result of 100*price to be an integer.
 
+UART packet structure:
+Byte 0: Header, indicates beginning of price transmission (0xAA)
+Byte 1: Upper 8 bits of Exchange A's price
+Byte 2: Lower 8 bits of Exchange A's price
+Byte 3: Upper 8 bits of Exchange B's price
+Byte 4: Lower 8 bits of Exchange B's price
+Byte 5: Footer, indicates end of price transmission (0x55)
 '''
-import numpy as np
+
 import time
+from collections import deque
+import random
+import serial
 
 start_time = time.perf_counter()
 
-filename = "data/WDC_sample.csv"        # Market data file
-number_of_ticks = 49999                    # Number of data points for price that we want to store
-prices = np.zeros(number_of_ticks)      # Create empty np array with enough size for our price data
+filename = "data/WDC_sample.csv"    # Market data file
+number_of_ticks = 50000             # Number of data points for price that we want to store
+prices = deque(maxlen=100)          # Create empty deque to store market prices
+
+volatility_threshold = 4            # Price change (cents) that is deemed volatile
+volatile_event_counter = 0          # Number of instances where price change is volatile
+
+lag_probability = 0.3               # Probability that exchange B lags during a volatile event
+sleep_time = 0.01                   # Sleep time between ticks
+
+ser = serial.Serial()               # Create serial object
+ser.port = 'COM3'                   # Set the port to COM3
+ser.baudrate = 9600                 # Set the baudrate to 9600 bits/sec
+ser.open()                          # Open the serial port
+
+header = 0xAA                       # Indicates the beginning of a price transmission
+footer = 0x55                       # Indicates the end of a price transmission
 
 try:
-    with open(filename, 'r') as f:              # Open our market data
-        # Find price for first 20 lines
-        for i in range (number_of_ticks):
-            prices[i] = f.readline().strip().split(',',3)[2]              # Add each line's price to our prices array
-            # print(f"Price {i}: ${f.readline().strip().split(',',3)[2]}")    # On each line, extract the price
+    with open(filename, 'r') as f:      # Open our market data
+        # Append first price to deque
+        prices.append(int(100*float(f.readline().strip().split(',',3)[2])))
+        # Find price for rest of the lines and check volatility
+        for i in range (1,number_of_ticks):
+            prices.append(int(100*float(f.readline().strip().split(',',3)[2])))   # Append prices to deque
+            current_price = prices[-1]
+            previous_price = prices[-2]
+
+            current_price_upper = (current_price >> 8) & 0xFF       # Upper bits of current price
+            current_price_lower = current_price & 0xFF              # Lower bits of current price
+
+            previous_price_upper = (previous_price >> 8) & 0xFF     # Upper bits of previous price
+            previous_price_lower = (previous_price) & 0xFF          # Lower bits of previous price
+
+            # Lag event:
+            if ((abs(current_price - previous_price) > volatility_threshold) and random.random() <= lag_probability):
+                ser.write(bytearray([header,                                        # Beginning of transmission
+                                     current_price_upper, current_price_lower,      # Exchange A's price
+                                     previous_price_upper, previous_price_lower,    # Exchange B's delayed price
+                                     footer]))                                      # End of transmission
+            
+            # No lag event:
+            else:
+                ser.write(bytearray([header,                                        # Beginning of transmission
+                                     current_price_upper, current_price_lower,      # Exchange A's price
+                                     current_price_upper, current_price_lower,      # Exchange B's matched price
+                                     footer]))                                      # End of transmission
+            
+            time.sleep(sleep_time)
+
 except FileNotFoundError:
     print("Error: File not found.")
+
+ser.close()             # Close the serial port
 
 end_time = time.perf_counter()
 
@@ -30,3 +83,7 @@ end_time = time.perf_counter()
 elapsed_time = end_time - start_time
 
 print(elapsed_time)
+
+print(prices)
+
+print(f"Number of volatile events: {volatile_event_counter}")
