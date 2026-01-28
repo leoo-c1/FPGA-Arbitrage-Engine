@@ -24,7 +24,7 @@ start_time = time.perf_counter()
 
 filename = "data/WDC_sample.csv"    # Market data file
 number_of_ticks = 50000             # Number of data points for price that we want to store
-prices = deque(maxlen=100)          # Create empty deque to store market prices
+prices = deque(maxlen=2)          # Create empty deque to store market prices
 
 volatility_threshold = 4            # Price change (cents) that is deemed volatile
 volatile_event_counter = 0          # Number of instances where price change is volatile
@@ -82,8 +82,4 @@ end_time = time.perf_counter()
 # Calculate the elapsed time
 elapsed_time = end_time - start_time
 
-print(elapsed_time)
-
-print(prices)
-
-print(f"Number of volatile events: {volatile_event_counter}")
+print(f"Execution time: {elapsed_time} seconds")
