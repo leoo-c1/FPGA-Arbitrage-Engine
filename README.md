@@ -2,7 +2,7 @@
 
 # FPGA Arbitrage Engine
 
-**A low-latency hardware arbitrage engine designed to exploit price discrepancies between simulated stock exchanges.**
+**A low-latency hardware arbitrage engine designed to exploit price discrepancies between simulated exchanges.**
 
 ![HDL](https://img.shields.io/badge/HDL-Verilog-7177bd?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNiI+PHRleHQgeD0iMTAiIHk9IjgiIGZvbnQtc2l6ZT0iMTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmYiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSJib2xkIj4mbHQ7LyZndDs8L3RleHQ+PC9zdmc+)
 ![Software](https://img.shields.io/badge/Python-Python?logo=python&logoColor=white&label=Software&labelColor=grey&color=4772A0)
@@ -15,6 +15,7 @@
 This project implements a hardware-based execution engine that can detect and act on latency arbitrage opportunities in real-time. The system simulates two stock exchanges, Exchange A and Exchange B, which stream historical [market data](https://github.com/leoo-c1/FPGA-Arbitrage-Engine/tree/main/data) for Western Digital (WDC) on the tick level.
 
 A Python-based [Exchange Simulator](https://github.com/leoo-c1/FPGA-Arbitrage-Engine/blob/main/software/exchange_simulator.py) creates simulated latency in Exchange B during periods of market volatility, creating price spreads between exchanges. The FPGA receives this market feed for both exchanges via UART, parses a custom 6-byte protocol and triggers Buy/Sell commands within microseconds of detecting discrepancy.
+
 
 
 
