@@ -24,7 +24,7 @@ module packet_parser (
     reg FSM_STATE = 1'b0;           // State of the FSM, initially idle
     wire FSM_IDLE = 1'b0;           // If we have just received footer packet or no packets yet
     wire FSM_READING = 1'b1;        // We are reading price packets
-    reg [2:0] packet_counter = 0;   // Counts number of received packets, resets after 4
+    reg [2:0] byte_counter = 0;     // Counts number of received bytes, resets after 4
 
     wire [7:0] received_packet,     // The packet of data we receive from the host computer
     wire uart_rx_valid;             // Pulses when a byte arrives
@@ -46,17 +46,17 @@ module packet_parser (
             // If we receive the header packet during an idle state
             if (received_packet == 8'hAA && FSM_STATE == FSM_IDLE) begin
                 FSM_STATE <= FSM_READING;   // We are now reading prices
-                packet_counter <= 0;        // Reset the packet counter
+                byte_counter <= 0;        // Reset the packet counter
                 packet_valid <= 0;
-            end else if (FSM_STATE == FSM_READING && packet_counter < 4) begin
-                case (packet_counter)
+            end else if (FSM_STATE == FSM_READING && byte_counter < 4) begin
+                case (byte_counter)
                     0: top_price_A <= received_packet;
                     1: bottom_price_A <= received_packet;
                     2: top_price_B <= received_packet;
                     3: bottom_price_B <= received_packet;
                     default: FSM_STATE <= FSM_READING; 
                 endcase
-                packet_counter <= packet_counter + 1;
+                byte_counter <= byte_counter + 1;
                 packet_valid <= 0;
             end else if (FSM_STATE == FSM_READING) begin
                 FSM_STATE <= FSM_IDLE;
@@ -70,7 +70,7 @@ module packet_parser (
         end
     end
 
-    uart_rx uart_logic (
+    uart_rx uart_receive (
         .clk(clk),
         .resetn(rst),
         .uart_rxd(uart_rx),
