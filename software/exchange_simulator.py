@@ -56,7 +56,7 @@ try:
             previous_price_upper = (previous_price >> 8) & 0xFF     # Upper bits of previous price
             previous_price_lower = (previous_price) & 0xFF          # Lower bits of previous price
 
-            # Lag event:
+            # During a lag event:
             if ((abs(current_price - previous_price) > volatility_threshold) and random.random() <= lag_probability):
                 ser.write(bytearray([header,                                        # Beginning of transmission
                                      current_price_upper, current_price_lower,      # Exchange A's price
