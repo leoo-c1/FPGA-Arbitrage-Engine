@@ -13,21 +13,21 @@ module trade_strategy (
     );
 
     always @ (posedge clk) begin
-        trade_action <= 2'b00;
+        trade_action <= 2'b00;      // Default assignment of no trade
 
-        if (!rst) begin
-            trade_action <= 2'b00;
-            profit <= 0;
-        end else if (packet_valid) begin
-            if (price_A > price_B) begin
-                trade_action <= 2'b10;
+        if (!rst) begin             // If the reset button is pressed
+            trade_action <= 2'b00;  // No trade action
+            profit <= 0;            // No profit
+        end else if (packet_valid) begin            // If we receive a valid uart packet
+            if (price_A > price_B) begin            // Check for arbitrage
+                trade_action <= 2'b10;              // Buy on B, sell on A
                 profit <= price_A - price_B;
-            end else if (price_B > price_A) begin
-                trade_action <= 2'b01;
+            end else if (price_B > price_A) begin   // Check for arbitrage
+                trade_action <= 2'b01;              // Buy on A, sell on B
                 profit <= price_B - price_A;
-            end else begin
-                trade_action <= 2'b00;
-                profit <= 0;
+            end else begin                          // No arbitrage opportunity
+                trade_action <= 2'b00;              // No trade action
+                profit <= 0;                        // No profit
             end
         end
     end
