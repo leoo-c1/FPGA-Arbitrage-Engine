@@ -1,6 +1,6 @@
 '''
-This is the python code for parsing our market data and simulating arbitrage opportunities by creating lag
-between two Exchanges (A and B) during volatile price changes in Exchange A.
+This is the python code for parsing our market data and simulating arbitrage opportunities by
+creating lag between two Exchanges (A and B) during volatile price changes in Exchange A.
 
 It first reads from the .csv containing market data, and extracts prices from each line.
 We multiply by 100 to turn our dollars and cents combo into a single integer.
