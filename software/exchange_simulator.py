@@ -23,6 +23,7 @@ ser.open()                          # Open the serial port
 header = 0xAA                       # Indicates the beginning of a price transmission
 footer = 0x55                       # Indicates the end of a price transmission
 
+all_transmission_complete = 0       # Flag to indicate all market data has been sent
 try:
     with open(filename, 'r') as f:      # Open our market data
         # Append first price to deque
@@ -52,11 +53,34 @@ try:
                                      current_price_upper, current_price_lower,      # Exchange A's price
                                      current_price_upper, current_price_lower,      # Exchange B's matched price
                                      footer]))                                      # End of transmission
+                
+            while ser.in_waiting >= 5: # We expect 5 bytes (Header, Action, P_Hi, P_Lo, Footer)
+                
+                first_byte = ser.read(1)
+                if (int.from_bytes(first_byte, "big") != 0xAA): # If first byte isn't header, disregard
+                    continue 
+
+                # Read the rest of the packet
+                packet = ser.read(4) # Action, Profit_H, Profit_L, Footer
+                
+                trade_action = packet[0]
+                profit_high = packet[1]
+                profit_low = packet[2]
+                footer_byte = packet[3]
+
+                if (footer_byte == footer):
+                    # Put profit together
+                    raw_profit = (profit_high << 8) | profit_low
+                    if (trade_action == 1):
+                        print(f"Trade action: Buy on Exchange A, sell on Exchange B | Profit: ${raw_profit/100:.2f}")
+                    elif (trade_action == 2):
+                        print(f"Trade action: Buy on Exchange B, sell on Exchange A | Profit: ${raw_profit/100:.2f}")
             
             time.sleep(sleep_time)
 
 except FileNotFoundError:
     print("Error: File not found.")
+
 
 ser.close()             # Close the serial port
 
