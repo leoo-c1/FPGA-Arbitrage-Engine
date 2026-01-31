@@ -12,7 +12,7 @@ module packet_parser (
     input clk,                          // 50MHz clock
     input rst,                          // Reset button
 
-    input uart_rx;                      // Connected to uart receive pin
+    input uart_rx,                      // Connected to uart receive pin
 
     output reg [15:0] price_A,          // The price on exchange A
     output reg [15:0] price_B,          // The price on exchange B
@@ -26,7 +26,7 @@ module packet_parser (
     wire FSM_READING = 1'b1;        // We are reading price packets
     reg [2:0] byte_counter = 0;     // Counts number of received bytes, resets after 4
 
-    wire [7:0] received_packet,     // The packet of data we receive from the host computer
+    wire [7:0] received_packet;     // The packet of data we receive from the host computer
     wire uart_rx_valid;             // Pulses when a byte arrives
 
     reg [7:0] top_price_A;          // The top 8 bits of exchange A's price
@@ -77,6 +77,6 @@ module packet_parser (
         .uart_rx_en(1'b1),
         .uart_rx_valid(uart_rx_valid),
         .uart_rx_data(received_packet)
-    )
+    );
 
 endmodule
