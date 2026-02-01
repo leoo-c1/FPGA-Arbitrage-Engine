@@ -4,23 +4,31 @@ module arbitrage_engine (
 
     input uart_rx,                  // Receives exchange prices
 
-    output wire uart_tx             // Transmits profit and trade actions
+    output wire uart_tx,            // Transmits profit and trade actions
+
+    // DEBUG OUTPUTS:
+    output wire packet_valid,
+    output reg [7:0] uart_tx_data,
+    output wire uart_tx_busy,
+    output reg uart_tx_en,
+    output wire [15:0] profit,
+    output wire [1:0] trade_action
     );
 
-    wire packet_valid;              // Flag to indicate full transmission complete
+    //wire packet_valid;              // Flag to indicate full transmission complete
 
     wire [15:0] price_A;            // Price on exchange A
     wire [15:0] price_B;            // Price on exchange B
 
-    reg [7:0] uart_tx_data;         // Data to transmit
-    wire uart_tx_busy;              // Flag to indicate if tx is busy sending
-    reg uart_tx_en = 1'b0;          // Tells uart_tx module to send the data
+    //reg [7:0] uart_tx_data;         // Data to transmit
+    //wire uart_tx_busy;              // Flag to indicate if tx is busy sending
+    //reg uart_tx_en = 1'b0;          // Tells uart_tx module to send the data
     reg [15:0] profit_storage;      // Safely stores profit
-    reg [7:0] trade_storage;        // Safely stores trade action
+    reg [1:0] trade_storage;        // Safely stores trade action
 
     wire [7:0] header = 8'hAA;  // Header byte of 0xAA
-    wire [15:0] profit;         // Profit from the trade action
-    wire [7:0] trade_action;    // Buy A, sell B = 01 | buy B, sell A = 10 | no trade = 00
+    //wire [15:0] profit;         // Profit from the trade action
+    //wire [7:0] trade_action;    // Buy A, sell B = 01 | buy B, sell A = 10 | no trade = 00
     wire [7:0] footer = 8'h55;  // Footer byte of 0x55
 
     // Finite state machine setup
@@ -33,8 +41,13 @@ module arbitrage_engine (
 
     always @ (posedge clk) begin
         uart_tx_en <= 1'b0;                         // By default, tx is not sending
+        uart_tx_data <= 0;                          // By default, nothing is being sent
 
-        if (!uart_tx_busy) begin                    // If we aren't in the middle of a transmission
+        if (!rst) begin                             // If we press the reset button
+            FSM_STATE <= IDLE;                      // Set state to idle
+            profit_storage <= 0;                    // Clear profit
+            trade_storage <= 0;                     // Clear trade action
+        end else if (!uart_tx_busy && !uart_tx_en) begin    // If we aren't in the middle of a transmission
             if (FSM_STATE == IDLE) begin            // If we are in the idle state,
                 if (trade_action > 0) begin         // and receive a trade,
                     profit_storage <= profit;       // Safely store the profit
@@ -44,7 +57,7 @@ module arbitrage_engine (
                     FSM_STATE <= SENT_HEADER;       // Tell FSM we have sent the header
                 end
             end else if (FSM_STATE == SENT_HEADER) begin    // If we have sent the header
-                uart_tx_data <= trade_storage;              // Send the stored trade
+                uart_tx_data <= {6'b0, trade_storage};              // Send the stored trade
                 uart_tx_en <= 1'b1;                         // Send the byte
                 FSM_STATE <= SENT_TRADE;                    // Tell FSM we sent the trade
 
