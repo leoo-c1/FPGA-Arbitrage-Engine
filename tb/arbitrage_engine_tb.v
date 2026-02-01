@@ -14,7 +14,7 @@ module arbitrage_engine_tb;
         .clk(clk),
         .rst(rst),
         .uart_rx(uart_rx),
-        .uart_tx(uart_tx),
+        .uart_tx(uart_tx)
     );
 
     initial begin
