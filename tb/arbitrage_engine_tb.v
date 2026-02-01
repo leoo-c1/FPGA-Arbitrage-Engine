@@ -8,14 +8,6 @@ module arbitrage_engine_tb;
 
     wire uart_tx;       // Transmits profit and trade actions
 
-    // DEBUG OUTPUTS
-    wire packet_valid;
-    wire [7:0] uart_tx_data;
-    wire uart_tx_busy;
-    wire uart_tx_en;
-    wire [15:0] profit;
-    wire [1:0] trade_action;
-
     localparam real BIT_PERIOD = 104167;
 
     arbitrage_engine arbitrage_engine_test (
@@ -23,12 +15,6 @@ module arbitrage_engine_tb;
         .rst(rst),
         .uart_rx(uart_rx),
         .uart_tx(uart_tx),
-        .packet_valid(packet_valid),
-        .uart_tx_data(uart_tx_data),
-        .uart_tx_busy(uart_tx_busy),
-        .uart_tx_en(uart_tx_en),
-        .profit(profit),
-        .trade_action(trade_action)
     );
 
     initial begin
