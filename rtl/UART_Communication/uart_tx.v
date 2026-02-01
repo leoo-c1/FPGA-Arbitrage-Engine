@@ -9,7 +9,7 @@ No significant changes have been made to the original repo aside from fixing a c
 
 module uart_tx #(
 // External parameters.
-parameter BIT_RATE     = 9600,       // bits / sec
+parameter BIT_RATE     = 115_200,    // bits / sec
 parameter CLK_HZ       = 50_000_000, // Clock frequency in hertz.
 parameter PAYLOAD_BITS = 8,          // Number of data bits per packet.
 parameter STOP_BITS    = 1           // Number of stop bits.

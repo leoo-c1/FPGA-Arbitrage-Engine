@@ -17,7 +17,7 @@ sleep_time = 0                      # Optional sleep time between ticks
 
 ser = serial.Serial()               # Create serial object
 ser.port = 'COM3'                   # Set the port to COM3
-ser.baudrate = 9600                 # Set the baudrate to 9600 bits/sec
+ser.baudrate = 115200               # Set the baudrate to 115200 bits/sec
 ser.open()                          # Open the serial port
 
 header = 0xAA                       # Indicates the beginning of a price transmission
