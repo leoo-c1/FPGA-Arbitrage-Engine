@@ -27,16 +27,16 @@ input  wire [PAYLOAD_BITS-1:0]   uart_tx_data  // The data to be sent
 // 
 
 //
-// Number of clock cycles per uart bit.
-localparam       CYCLES_PER_BIT     = BIT_P / CLK_P;
-
-//
 // Number of nanoseconds per bit.
 localparam  BIT_P           = 1_000_000_000 * 1/BIT_RATE;
 
 //
 // Number of nanoseconds per clock period.
 localparam  CLK_P           = 1_000_000_000 * 1/CLK_HZ;
+
+//
+// Number of clock cycles per uart bit.
+localparam       CYCLES_PER_BIT     = BIT_P / CLK_P;
 
 //
 // Size of the registers which store sample counts and bit durations.
