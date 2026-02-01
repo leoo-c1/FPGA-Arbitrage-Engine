@@ -4,7 +4,7 @@ module arbitrage_engine (
 
     input uart_rx,                  // Receives exchange prices
 
-    output wire uart_tx,            // Transmits profit and trade actions
+    output wire uart_tx             // Transmits profit and trade actions
     );
 
     wire packet_valid;              // Flag to indicate full transmission complete
