@@ -12,9 +12,9 @@
 </div>
 
 ## Overview
-This project implements a hardware-based execution engine that can detect and act on latency arbitrage opportunities in real-time. The system simulates two stock exchanges, Exchange A and Exchange B, which stream historical [market data](https://github.com/leoo-c1/FPGA-Arbitrage-Engine/tree/main/data) for Western Digital (WDC) on the tick level.
+This project implements a hardware-based execution engine that can detect and act on latency arbitrage opportunities in real-time. The system simulates two stock exchanges, Exchange A and Exchange B, which stream historical [market data](/data) for Western Digital (WDC) on the tick level.
 
-A Python-based [Exchange Simulator](https://github.com/leoo-c1/FPGA-Arbitrage-Engine/blob/main/software/exchange_simulator.py) creates simulated latency in Exchange B during periods of market volatility, creating price spreads between exchanges. The FPGA receives this market feed for both exchanges via UART, parses a custom 6-byte protocol and triggers Buy/Sell commands within microseconds of detecting discrepancy, which are returned to the Exchange Simulator.
+A Python-based [Exchange Simulator](software/exchange_simulator.py) creates simulated latency in Exchange B during periods of market volatility, creating price spreads between exchanges. Using [RTL modules](/rtl), the FPGA receives this market feed for both exchanges via UART, parses a custom 6-byte protocol and triggers Buy/Sell commands within microseconds of detecting discrepancy, which are returned to the Exchange Simulator.
 
 ## System Architecture
 
@@ -28,7 +28,7 @@ The project functions as a hardware-in-the-loop simulation connecting a Python s
 
 ## Communication Protocol
 
-The system uses a fixed-length byte protocol over UART (9600 baud).
+The system uses a fixed-length byte protocol over UART (115200 baud).
 
 ### Inbound Packet (Host to FPGA)
 Prices are scaled by 100 and sent as integers.
@@ -109,6 +109,7 @@ To communicate with the board via UART, an external USB-to-Serial converter is u
     ├── trade_strategy_tb.v
     └── wave.do                 # Waveform configuration for Questa
 ```
+
 
 
 
