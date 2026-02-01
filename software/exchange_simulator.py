@@ -13,7 +13,7 @@ volatility_threshold = 4            # Price change (cents) that is deemed volati
 volatile_event_counter = 0          # Number of instances where price change is volatile
 
 lag_probability = 0.3               # Probability that exchange B lags during a volatile event
-sleep_time = 0.01                   # Sleep time between ticks
+sleep_time = 0                      # Optional sleep time between ticks
 
 ser = serial.Serial()               # Create serial object
 ser.port = 'COM3'                   # Set the port to COM3
