@@ -8,13 +8,27 @@ module arbitrage_engine_tb;
 
     wire uart_tx;       // Transmits profit and trade actions
 
+    // DEBUG OUTPUTS
+    wire packet_valid;
+    wire [7:0] uart_tx_data;
+    wire uart_tx_busy;
+    wire uart_tx_en;
+    wire [15:0] profit;
+    wire [1:0] trade_action;
+
     localparam real BIT_PERIOD = 104167;
 
     arbitrage_engine arbitrage_engine_test (
         .clk(clk),
         .rst(rst),
         .uart_rx(uart_rx),
-        .uart_tx(uart_tx)
+        .uart_tx(uart_tx),
+        .packet_valid(packet_valid),
+        .uart_tx_data(uart_tx_data),
+        .uart_tx_busy(uart_tx_busy),
+        .uart_tx_en(uart_tx_en),
+        .profit(profit),
+        .trade_action(trade_action)
     );
 
     initial begin
@@ -127,8 +141,8 @@ module arbitrage_engine_tb;
         // Send the end bit to indicate the end of the transmission
         uart_rx = 1; #(BIT_PERIOD);
 
-        // Wait a bit
-        #5000;
+        // Wait 10ms
+        #(10_000_000);
 
         $stop(2);
     end
