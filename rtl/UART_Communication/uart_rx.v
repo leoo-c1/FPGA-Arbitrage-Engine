@@ -4,10 +4,16 @@ Source repository: https://github.com/ben-marshall/uart
 License: MIT
 
 Note: I have used Ben Marshall's project to provide UART functionality for my other FPGA projects.
-No significant changes have been made to the original author's implementation.
+No significant changes have been made to the original repo aside from fixing a compilation error.
 */
 
-module uart_rx(
+module uart_rx #(
+// External parameters.
+parameter BIT_RATE     = 9600,       // bits / sec
+parameter CLK_HZ       = 50_000_000, // Clock frequency in hertz.
+parameter PAYLOAD_BITS = 8,          // Number of data bits per packet.
+parameter STOP_BITS    = 1           // Number of stop bits.
+) (
 input  wire       clk          , // Top level system clock input.
 input  wire       resetn       , // Asynchronous active low reset.
 input  wire       uart_rxd     , // UART Recieve pin.
@@ -17,28 +23,6 @@ output wire       uart_rx_valid, // Valid data recieved and available.
 output reg  [PAYLOAD_BITS-1:0] uart_rx_data   // The recieved data.
 );
 
-// --------------------------------------------------------------------------- 
-// External parameters.
-// 
-
-//
-// Input bit rate of the UART line.
-parameter   BIT_RATE        = 9600; // bits / sec
-localparam  BIT_P           = 1_000_000_000 * 1/BIT_RATE; // nanoseconds
-
-//
-// Clock frequency in hertz.
-parameter   CLK_HZ          =    50_000_000;
-localparam  CLK_P           = 1_000_000_000 * 1/CLK_HZ; // nanoseconds
-
-//
-// Number of data bits recieved per UART packet.
-parameter   PAYLOAD_BITS    = 8;
-
-//
-// Number of stop bits indicating the end of a packet.
-parameter   STOP_BITS       = 1;
-
 // -------------------------------------------------------------------------- 
 // Internal parameters.
 // 
@@ -46,6 +30,14 @@ parameter   STOP_BITS       = 1;
 //
 // Number of clock cycles per uart bit.
 localparam       CYCLES_PER_BIT     = BIT_P / CLK_P;
+
+//
+// Number of nanoseconds per bit.
+localparam  BIT_P           = 1_000_000_000 * 1/BIT_RATE;
+
+//
+// Number of nanoseconds per clock period.
+localparam  CLK_P           = 1_000_000_000 * 1/CLK_HZ;
 
 //
 // Size of the registers which store sample counts and bit durations.
@@ -165,7 +157,6 @@ always @(posedge clk) begin : p_bit_sample
     end
 end
 
-
 //
 // Increments the cycle counter when recieving.
 always @(posedge clk) begin : p_cycle_counter
@@ -180,7 +171,6 @@ always @(posedge clk) begin : p_cycle_counter
     end
 end
 
-
 //
 // Progresses the next FSM state.
 always @(posedge clk) begin : p_fsm_state
@@ -190,7 +180,6 @@ always @(posedge clk) begin : p_fsm_state
         fsm_state <= n_fsm_state;
     end
 end
-
 
 //
 // Responsible for updating the internal value of the rxd_reg.
@@ -203,6 +192,5 @@ always @(posedge clk) begin : p_rxd_reg
         rxd_reg_0   <= uart_rxd;
     end
 end
-
 
 endmodule

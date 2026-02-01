@@ -4,10 +4,16 @@ Source repository: https://github.com/ben-marshall/uart
 License: MIT
 
 Note: I have used Ben Marshall's project to provide UART functionality for my other FPGA projects.
-No significant changes have been made to the original author's implementation.
+No significant changes have been made to the original repo aside from fixing a compilation error.
 */
 
-module uart_tx(
+module uart_tx #(
+// External parameters.
+parameter BIT_RATE     = 9600,       // bits / sec
+parameter CLK_HZ       = 50_000_000, // Clock frequency in hertz.
+parameter PAYLOAD_BITS = 8,          // Number of data bits per packet.
+parameter STOP_BITS    = 1           // Number of stop bits.
+) (
 input  wire         clk         , // Top level system clock input.
 input  wire         resetn      , // Asynchronous active low reset.
 output wire         uart_txd    , // UART transmit pin.
@@ -17,34 +23,20 @@ input  wire [PAYLOAD_BITS-1:0]   uart_tx_data  // The data to be sent
 );
 
 // --------------------------------------------------------------------------- 
-// External parameters.
-// 
-
-//
-// Input bit rate of the UART line.
-parameter   BIT_RATE        = 9600; // bits / sec
-localparam  BIT_P           = 1_000_000_000 * 1/BIT_RATE; // nanoseconds
-
-//
-// Clock frequency in hertz.
-parameter   CLK_HZ          =    50_000_000;
-localparam  CLK_P           = 1_000_000_000 * 1/CLK_HZ; // nanoseconds
-
-//
-// Number of data bits recieved per UART packet.
-parameter   PAYLOAD_BITS    = 8;
-
-//
-// Number of stop bits indicating the end of a packet.
-parameter   STOP_BITS       = 1;
-
-// --------------------------------------------------------------------------- 
 // Internal parameters.
 // 
 
 //
 // Number of clock cycles per uart bit.
 localparam       CYCLES_PER_BIT     = BIT_P / CLK_P;
+
+//
+// Number of nanoseconds per bit.
+localparam  BIT_P           = 1_000_000_000 * 1/BIT_RATE;
+
+//
+// Number of nanoseconds per clock period.
+localparam  CLK_P           = 1_000_000_000 * 1/CLK_HZ;
 
 //
 // Size of the registers which store sample counts and bit durations.
