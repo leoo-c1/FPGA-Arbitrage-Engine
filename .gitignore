@@ -6,6 +6,7 @@ greybox_tmp/
 /hc_output
 /.qsys_edit
 *.qws
+*.rpt
 *.ppf
 *.ddb
 *.cmp
