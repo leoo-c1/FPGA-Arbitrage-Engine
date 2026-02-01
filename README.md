@@ -87,6 +87,9 @@ To communicate with the board via UART, an external USB-to-Serial converter is u
 ```text
 ├── data/
 │   └── WDC_sample.csv          # Historical market data (CSV)
+├── quartus/                    # Quartus Prime project files
+│   ├── Arbitrage_Engine.qpf
+│   └── Arbitrage_Engine.qsf
 ├── rtl/                        # Verilog source code
 │   ├── Arbitrage_Engine/
 │   │   └── arbitrage_engine.v  # Top-level module and TX control
@@ -100,7 +103,13 @@ To communicate with the board via UART, an external USB-to-Serial converter is u
 │       └── uart_tx.v
 ├── software/                   # Python simulation scripts
 │   └── exchange_simulator.py
+└── tb/                         # Testbenches and simulation scripts
+    ├── arbitrage_engine_tb.v
+    ├── packet_parser_tb.v
+    ├── trade_strategy_tb.v
+    └── wave.do                 # Waveform configuration for Questa
 ```
+
 
 
 
