@@ -109,8 +109,9 @@ To communicate with the board via UART, an external USB-to-Serial converter is u
     ├── arbitrage_engine_tb.v
     ├── packet_parser_tb.v
     ├── trade_strategy_tb.v
-    └── wave.do                 # Waveform configuration for Questa
+    └── arb_wave.wlf            # Waveform log file for Questa
 ```
+
 
 
 
