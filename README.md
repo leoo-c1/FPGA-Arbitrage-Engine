@@ -105,12 +105,13 @@ To communicate with the board via UART, an external USB-to-Serial converter is u
 │       └── uart_tx.v
 ├── software/                   # Python simulation scripts
 │   └── exchange_simulator.py
-└── tb/                         # Testbenches and simulation scripts
+└── tb/                         # Testbenches
     ├── arbitrage_engine_tb.v
     ├── packet_parser_tb.v
     ├── trade_strategy_tb.v
     └── arb_wave.wlf            # Waveform log file for Questa
 ```
+
 
 
 
