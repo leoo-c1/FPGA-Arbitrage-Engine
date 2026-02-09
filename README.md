@@ -112,17 +112,5 @@ To communicate with the board via UART, an external USB-to-Serial converter is u
     └── arb_wave.wlf            # Waveform log file for Questa
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Credits
+- [UART_Communication](library/UART_Communication) implements Ben Marshall's [uart repository](https://github.com/ben-marshall/uart/tree/master).
