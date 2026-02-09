@@ -113,5 +113,6 @@ To communicate with the board via UART, an external USB-to-Serial converter is u
 ```
 
 ## Credits
-- [UART_Communication](library/UART_Communication) implements Ben Marshall's [UART repository](https://github.com/ben-marshall/uart/tree/master).
+- [UART_Communication](rtl/UART_Communication) implements Ben Marshall's [UART repository](https://github.com/ben-marshall/uart/tree/master).
+
 
